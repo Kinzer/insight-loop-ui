@@ -1,8 +1,8 @@
 import React, { ReactNode } from "react";
 import { useAppContext } from "../../Context";
 import { ListItem } from "../ListItem/ListItem";
+import { fetchRepos } from "./useListData";
 
-// TODO: Add tests for this component
 type GithubRepoProps = {
   name: string;
   description: string;
@@ -11,34 +11,28 @@ type GithubRepoProps = {
   stargazers_count: number;
 };
 
-async function fetchRepos(searchValue: string) {
-  return await fetch(
-    `https://api.github.com/search/repositories?q=${searchValue}&sort=stars&order=desc`
-  );
-}
-
 export const RepoList = (props: { children?: ReactNode }): JSX.Element => {
-  const { searchValue } = useAppContext();
-  const [repos, setRepos] = React.useState<GithubRepoProps[]>([]);
+  const { journalEntryValue } = useAppContext();
+  const [listItems, setListItems] = React.useState<GithubRepoProps[]>([]);
 
   React.useEffect(() => {
-    if (!searchValue) {
+    if (!journalEntryValue) {
       return;
     }
-    console.log("searchValue", searchValue);
-    fetchRepos(searchValue)
+    console.log("journalEntryValue", journalEntryValue);
+    fetchRepos(journalEntryValue)
       .then((res) => res.json())
       .then((data) => {
-        setRepos(data.items);
+        setListItems(data.items);
       })
       .catch((err) => {
         console.error(err);
       });
-  }, [searchValue]);
+  }, [journalEntryValue]);
 
-  return searchValue ? (
+  return journalEntryValue ? (
     <ul className="p-4">
-      {repos?.map((repo, idx) => (
+      {listItems?.map((repo, idx) => (
         <ListItem
           key={idx}
           className="max-w-md mx-auto bg-white overflow-hidden md:max-w-2xl mt-2 p-2"

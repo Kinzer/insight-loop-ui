@@ -1,14 +1,14 @@
 import React, { useContext, useState } from "react";
 
 export interface Context {
-  searchValue: string;
-  setSearchValue: (val: string) => void;
-  searchHistory: string[];
+  journalEntryValue: string;
+  setJournalEntryValue: (val: string) => void;
+  journalEntryHistory: string[];
 }
 const defaultVal = {
-  searchValue: "",
-  setSearchValue: () => {},
-  searchHistory: [],
+  journalEntryValue: "",
+  setJournalEntryValue: () => {},
+  journalEntryHistory: [],
 } as Context;
 
 const context = React.createContext(defaultVal);
@@ -16,25 +16,38 @@ const context = React.createContext(defaultVal);
 const { Provider } = context;
 
 export const ContextWrapper = ({ children }: { children: any }) => {
-  const [searchValue, setSearchValue] = useState(defaultVal.searchValue);
-  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [journalEntryValue, setJournalEntryValue] = useState(
+    defaultVal.journalEntryValue
+  );
+  const [journalEntryHistory, setJournalEntryHistory] = useState<string[]>([]);
 
   React.useEffect(() => {
-    if (!searchHistory) {
-      // TODO check if searchHistory is empty
-      const localSearchHistory = localStorage.getItem("searchHistory");
-      if (localSearchHistory) {
-        setSearchHistory(JSON.parse(localSearchHistory));
+    if (!journalEntryHistory) {
+      // TODO check if journalEntryHistory is empty
+      const localJournalEntryHistory = localStorage.getItem(
+        "journalEntryHistory"
+      );
+      if (localJournalEntryHistory) {
+        setJournalEntryHistory(JSON.parse(localJournalEntryHistory));
       }
     }
 
-    const updatedSearchHistory = [...searchHistory, searchValue];
+    const updatedjournalEntryHistory = [
+      ...journalEntryHistory,
+      journalEntryValue,
+    ];
 
-    setSearchHistory(updatedSearchHistory);
-  }, [searchValue]);
+    setJournalEntryHistory(updatedjournalEntryHistory);
+  }, [journalEntryValue]);
 
   return (
-    <Provider value={{ searchValue, setSearchValue, searchHistory }}>
+    <Provider
+      value={{
+        journalEntryValue,
+        setJournalEntryValue: setJournalEntryValue,
+        journalEntryHistory,
+      }}
+    >
       {children}
     </Provider>
   );
